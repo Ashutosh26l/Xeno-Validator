@@ -1,0 +1,20 @@
+# ── Xeno Validator — Docker Compose ──────────────────
+# Single command deployment: docker compose up -d
+
+services:
+  xeno-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: xeno-validator
+    ports:
+      - "80:80"
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

@@ -1,0 +1,3 @@
+order_id,order_date,customer_name,phone,country,product_name,quantity,cost,payment_mode,payment_status
+4001,2023-10-01,Test Auto Suggest,+14155552671,USA,Mouse,1,10.00,Credit Card,Paid
+4002,2023-10-02,Test User 2,+447700900077,GBR,Keyboard,2,45.50,UPI,Paid
