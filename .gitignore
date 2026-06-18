@@ -3,6 +3,7 @@ node_modules/
 
 # Environment variables (SECRETS!)
 .env
+.env.*
 
 # Build output
 dist/
