@@ -4,7 +4,6 @@
 
 import { Router } from "express";
 import { supabase } from "../config/supabase.js";
-import { authMiddleware } from "../middleware/auth.js";
 import uploadMiddleware from "../middleware/upload.js";
 import { validateColumns } from "../validators/columnValidator.js";
 import { env } from "../config/env.js";
@@ -12,16 +11,9 @@ import { env } from "../config/env.js";
 const router = Router();
 
 // ── POST /api/upload ─────────────────────────────────────────────────────────
-// Phase 1: column validation only — no row-level validation yet.
-//
-// Happy paths:
-//   400  missing required columns   → reject file
-//   200  extra columns found        → { needsMapping: true, extraColumns, uploadId }
-//   201  columns OK                 → { uploadId, status: "pending" }
 
 router.post(
   "/upload",
-  authMiddleware,
   uploadMiddleware.single("file"),
   async (req, res, next) => {
     try {
@@ -48,9 +40,7 @@ router.post(
       }
 
       // ── Persist upload record to DB ───────────────────────────────────────
-      // The raw CSV is stored in Supabase Storage so the validate route can
-      // retrieve it later without the buffer being in memory.
-      const storagePath = `uploads/${req.user.id}/${Date.now()}_${originalname}`;
+      const storagePath = `uploads/${Date.now()}_${originalname}`;
 
       const { error: storageError } = await supabase.storage
         .from(env.supabaseStorageBucket)
@@ -63,10 +53,8 @@ router.post(
       const { data: upload, error: dbError } = await supabase
         .from("uploads")
         .insert({
-          user_id:           req.user.id,
           original_filename: originalname,
           status:            "pending",
-          // store the raw CSV path so validate route can fetch it
           clean_csv_storage_path: storagePath,
         })
         .select("id, status, original_filename, uploaded_at")
@@ -110,7 +98,6 @@ router.post(
 
 router.post(
   "/upload/:uploadId/confirm-mapping",
-  authMiddleware,
   async (req, res, next) => {
     try {
       const { uploadId } = req.params;
@@ -124,10 +111,9 @@ router.post(
         });
       }
 
-      // Verify ownership
       const { data: upload, error: fetchError } = await supabase
         .from("uploads")
-        .select("id, user_id, status")
+        .select("id, status")
         .eq("id", uploadId)
         .maybeSingle();
 
@@ -138,14 +124,6 @@ router.post(
           success: false,
           error: "Upload not found.",
           code: 404,
-        });
-      }
-
-      if (upload.user_id !== req.user.id) {
-        return res.status(403).json({
-          success: false,
-          error: "Access denied.",
-          code: 403,
         });
       }
 

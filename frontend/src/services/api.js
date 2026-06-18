@@ -1,42 +1,11 @@
 // src/services/api.js
-// Axios client with JWT interceptor per spec §16 services/api.js
+// Axios client for API calls
 
 import axios from "axios";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
 });
-
-// Attach JWT to every request
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
-
-// Auto-logout on 401
-API.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      // Only redirect if not already on login/register
-      if (
-        !window.location.pathname.includes("/login") &&
-        !window.location.pathname.includes("/register")
-      ) {
-        window.location.href = "/login";
-      }
-    }
-    return Promise.reject(error);
-  }
-);
-
-// Auth
-export const register       = (data)         => API.post("/auth/register", data);
-export const login          = (data)         => API.post("/auth/login", data);
-export const getMe          = ()             => API.get("/auth/me");
 
 // Upload
 export const uploadCSV      = (formData)     => API.post("/upload", formData);

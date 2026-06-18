@@ -1,6 +1,5 @@
 // src/routes/download.js
 // All download routes — generate signed URLs from Supabase Storage.
-// Per spec §12 "Downloads" section.
 //
 // GET /api/download/zip/:uploadId
 // GET /api/download/clean/:uploadId
@@ -10,19 +9,17 @@
 
 import { Router } from "express";
 import { supabase } from "../config/supabase.js";
-import { authMiddleware } from "../middleware/auth.js";
 import { getSignedUrl } from "../services/storageService.js";
 
 const router = Router();
 
 /**
- * Helper — verifies upload ownership and returns the storage path
- * for the requested file type.
+ * Helper — returns the storage path for the requested file type.
  */
-async function getStoragePath(uploadId, userId, fileType) {
+async function getStoragePath(uploadId, fileType) {
   const { data: upload, error } = await supabase
     .from("uploads")
-    .select("user_id, zip_storage_path, clean_csv_storage_path, invalid_csv_storage_path, error_report_storage_path, ai_summary_storage_path, status")
+    .select("zip_storage_path, clean_csv_storage_path, invalid_csv_storage_path, error_report_storage_path, ai_summary_storage_path, status")
     .eq("id", uploadId)
     .maybeSingle();
 
@@ -30,9 +27,6 @@ async function getStoragePath(uploadId, userId, fileType) {
 
   if (!upload) {
     return { error: { status: 404, message: "Upload not found." } };
-  }
-  if (upload.user_id !== userId) {
-    return { error: { status: 403, message: "Access denied." } };
   }
   if (upload.status !== "completed") {
     return { error: { status: 400, message: "Upload has not been validated yet." } };
@@ -61,7 +55,7 @@ function downloadHandler(fileType) {
   return async (req, res, next) => {
     try {
       const { uploadId } = req.params;
-      const result = await getStoragePath(uploadId, req.user.id, fileType);
+      const result = await getStoragePath(uploadId, fileType);
 
       if (result.error) {
         return res.status(result.error.status).json({
@@ -83,10 +77,10 @@ function downloadHandler(fileType) {
   };
 }
 
-router.get("/zip/:uploadId",     authMiddleware, downloadHandler("zip"));
-router.get("/clean/:uploadId",   authMiddleware, downloadHandler("clean"));
-router.get("/invalid/:uploadId", authMiddleware, downloadHandler("invalid"));
-router.get("/errors/:uploadId",  authMiddleware, downloadHandler("errors"));
-router.get("/summary/:uploadId", authMiddleware, downloadHandler("summary"));
+router.get("/zip/:uploadId",     downloadHandler("zip"));
+router.get("/clean/:uploadId",   downloadHandler("clean"));
+router.get("/invalid/:uploadId", downloadHandler("invalid"));
+router.get("/errors/:uploadId",  downloadHandler("errors"));
+router.get("/summary/:uploadId", downloadHandler("summary"));
 
 export default router;

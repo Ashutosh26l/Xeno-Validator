@@ -1,22 +1,10 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { LogOut, Sun, Moon, Database } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { Sun, Moon } from 'lucide-react'
 import { useTheme } from './ThemeContext.jsx'
 
 export default function Navbar() {
   const location = useLocation()
-  const navigate = useNavigate()
   const { isDark, toggleTheme } = useTheme()
-  const token = localStorage.getItem('token')
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
-
-  // Hide on login/register only
-  if (['/login', '/register'].includes(location.pathname)) return null
-
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    navigate('/')
-  }
 
   const isActive = (path) => location.pathname.startsWith(path)
 
@@ -25,98 +13,65 @@ export default function Navbar() {
       background: 'var(--bg-secondary)',
       borderBottom: '1px solid var(--border)',
       padding: '0 1.5rem',
-      height: '64px',
+      height: '56px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       position: 'sticky',
       top: 0,
       zIndex: 50,
-      backdropFilter: 'blur(20px)',
     }}>
       {/* Left — Logo */}
-      <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
-        <Database size={24} color="var(--accent)" />
-        <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>
-          Xeno Validator
+      <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none' }}>
+        <span style={{
+          fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)',
+          letterSpacing: '-0.01em',
+        }}>
+          Xeno<span style={{ color: 'var(--accent)' }}>Validator</span>
         </span>
       </Link>
 
       {/* Center — Nav links */}
-      {token && (
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Link
-            to="/upload"
-            style={{
-              padding: '0.5rem 1.15rem',
-              borderRadius: 999,
-              fontSize: '0.9rem',
-              fontWeight: isActive('/upload') ? 600 : 400,
-              color: isActive('/upload') ? '#fff' : 'var(--text-secondary)',
-              background: isActive('/upload') ? 'var(--accent)' : 'transparent',
-              textDecoration: 'none',
-              transition: 'all 0.3s ease',
-            }}
-          >Upload</Link>
-          <Link
-            to="/history"
-            style={{
-              padding: '0.5rem 1.15rem',
-              borderRadius: 999,
-              fontSize: '0.9rem',
-              fontWeight: isActive('/history') || isActive('/report') || isActive('/dashboard') ? 600 : 400,
-              color: isActive('/history') || isActive('/report') || isActive('/dashboard') ? '#fff' : 'var(--text-secondary)',
-              background: isActive('/history') || isActive('/report') || isActive('/dashboard') ? 'var(--accent)' : 'transparent',
-              textDecoration: 'none',
-              transition: 'all 0.3s ease',
-            }}
-          >History</Link>
-        </div>
-      )}
-
-      {/* Right — User + Theme + Logout */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <button 
-          onClick={toggleTheme} 
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}
-          title="Toggle Theme"
-        >
-          {isDark ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
-        {token && user ? (
-          <>
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              {user.name}
-            </span>
-            <button
-              onClick={handleLogout}
-              className="btn-secondary"
-              style={{ padding: '0.45rem 1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-            >
-              <LogOut size={16} /> Logout
-            </button>
-          </>
-        ) : (
-          <>
+      <div style={{ display: 'flex', gap: '0.25rem' }}>
+        {[
+          { to: '/upload', label: 'Upload' },
+          { to: '/history', label: 'History' },
+        ].map(({ to, label }) => {
+          const active = to === '/history'
+            ? isActive('/history') || isActive('/report') || isActive('/dashboard')
+            : isActive(to)
+          return (
             <Link
-              to="/login"
+              key={to}
+              to={to}
               style={{
-                color: 'var(--text-secondary)', textDecoration: 'none',
-                fontSize: '0.9rem', fontWeight: 500,
-                transition: 'color 0.3s ease',
-              }}
-            >Sign In</Link>
-            <Link
-              to="/register"
-              className="btn-primary"
-              style={{
-                padding: '0.45rem 1.1rem', fontSize: '0.85rem',
+                padding: '0.4rem 0.9rem',
+                borderRadius: 6,
+                fontSize: '0.88rem',
+                fontWeight: active ? 600 : 450,
+                color: active ? 'var(--accent)' : 'var(--text-secondary)',
+                background: active ? 'var(--accent-subtle)' : 'transparent',
                 textDecoration: 'none',
+                transition: 'all 0.2s ease',
               }}
-            >Sign Up</Link>
-          </>
-        )}
+            >{label}</Link>
+          )
+        })}
       </div>
+
+      {/* Right — Theme toggle */}
+      <button
+        onClick={toggleTheme}
+        style={{
+          background: 'none', border: '1px solid var(--border)',
+          borderRadius: 6, padding: '0.35rem',
+          cursor: 'pointer', color: 'var(--text-secondary)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}
+        title="Toggle Theme"
+      >
+        {isDark ? <Sun size={16} /> : <Moon size={16} />}
+      </button>
     </nav>
   )
 }

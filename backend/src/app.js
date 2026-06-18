@@ -10,7 +10,7 @@ import dotenv  from "dotenv";
 dotenv.config();
 
 import { validateEnv, env } from "./config/env.js";
-import authRoutes     from "./routes/auth.js";
+
 import uploadRoutes   from "./routes/upload.js";
 import validateRoutes from "./routes/validate.js";
 import reportRoutes   from "./routes/report.js";
@@ -33,7 +33,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.use("/api/auth",     authRoutes);
+
 app.use("/api",          uploadRoutes);
 app.use("/api",          validateRoutes);
 app.use("/api",          reportRoutes);

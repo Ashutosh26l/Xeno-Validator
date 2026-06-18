@@ -1,299 +1,196 @@
-import { useNavigate } from 'react-router-dom'
-import {
-  Upload, History, ShieldCheck, FileSpreadsheet,
-  ArrowRight, Zap, BarChart3, Download, CheckCircle2,
-  Database
-} from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ArrowRight, FileText, BarChart2, Download, CheckCircle } from 'lucide-react'
 
 export default function Landing() {
-  const navigate = useNavigate()
-  const token = localStorage.getItem('token')
-
-  const handleAction = (path) => {
-    if (token) {
-      navigate(path)
-    } else {
-      navigate('/login')
-    }
-  }
-
   return (
-    <div style={{ minHeight: '100vh', overflow: 'hidden' }}>
-      {/* ── Hero Section ──────────────────────────────────────────────── */}
+    <div>
+      {/* ── Hero ─────────────────────────────────────────────────── */}
       <section style={{
-        position: 'relative',
-        padding: '5rem 1.5rem 4rem',
-        textAlign: 'center',
-        background: 'radial-gradient(ellipse at top, rgba(99,102,241,0.15) 0%, transparent 60%)',
+        padding: '4rem 1.5rem 3rem',
+        maxWidth: 720,
+        margin: '0 auto',
       }}>
-        {/* Floating orbs */}
-        <div style={{
-          position: 'absolute', top: '10%', left: '10%',
-          width: 300, height: 300, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(99,102,241,0.08), transparent 70%)',
-          filter: 'blur(40px)', pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute', top: '20%', right: '5%',
-          width: 200, height: 200, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(165,94,234,0.08), transparent 70%)',
-          filter: 'blur(40px)', pointerEvents: 'none',
-        }} />
-
-        <div className="animate-fade-in" style={{ position: 'relative', zIndex: 1 }}>
-          {/* Badge */}
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-            padding: '0.4rem 1rem', borderRadius: 999,
-            background: 'var(--accent-glow)', border: '1px solid var(--border-accent)',
-            fontSize: '0.8rem', fontWeight: 600, color: 'var(--accent)',
-            marginBottom: '1.5rem',
+        <div className="animate-fade-in">
+          <p style={{
+            fontSize: '0.82rem',
+            fontWeight: 600,
+            color: 'var(--accent)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            marginBottom: '0.75rem',
           }}>
-            <Zap size={14} /> Automated CSV Validation
-          </div>
+            CSV Validation Tool
+          </p>
 
           <h1 style={{
-            fontSize: 'clamp(2rem, 5vw, 3.2rem)',
-            fontWeight: 900,
-            lineHeight: 1.15,
-            marginBottom: '1.25rem',
-            background: 'linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 50%, #a55eea 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
+            fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+            fontWeight: 750,
+            lineHeight: 1.2,
+            color: 'var(--text-primary)',
+            marginBottom: '1rem',
           }}>
-            Validate Your Transaction
-            <br />Data in Seconds
+            Validate your transaction data, find errors, export clean files.
           </h1>
 
           <p style={{
-            fontSize: 'clamp(1rem, 2vw, 1.15rem)',
+            fontSize: '1.05rem',
             color: 'var(--text-secondary)',
-            maxWidth: 560,
-            margin: '0 auto 2.5rem',
-            lineHeight: 1.6,
+            lineHeight: 1.65,
+            marginBottom: '2rem',
+            maxWidth: 540,
           }}>
-            Upload your CSV files and get instant validation with detailed error reports,
-            quality scores, and clean data exports.
+            Upload a CSV and get instant validation — bad dates, invalid phones,
+            duplicate entries, missing fields. Download clean data and detailed
+            error reports.
           </p>
 
-          {/* CTA Buttons */}
-          <div style={{
-            display: 'flex', gap: '1rem',
-            justifyContent: 'center', flexWrap: 'wrap',
-          }}>
-            <button
-              id="hero-upload-btn"
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <Link
+              to="/upload"
               className="btn-primary"
-              onClick={() => handleAction('/upload')}
+              id="hero-upload-btn"
               style={{
-                fontSize: '1.05rem', padding: '0.95rem 2.2rem',
-                display: 'flex', alignItems: 'center', gap: '0.6rem',
+                fontSize: '0.95rem', padding: '0.7rem 1.5rem',
+                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                textDecoration: 'none',
               }}
             >
-              <Upload size={20} /> Upload CSV
-              <ArrowRight size={18} style={{ marginLeft: '0.25rem' }} />
-            </button>
-            <button
-              id="hero-history-btn"
+              Upload CSV <ArrowRight size={16} />
+            </Link>
+            <Link
+              to="/history"
               className="btn-secondary"
-              onClick={() => handleAction('/history')}
+              id="hero-history-btn"
               style={{
-                fontSize: '1.05rem', padding: '0.95rem 2.2rem',
-                display: 'flex', alignItems: 'center', gap: '0.6rem',
+                fontSize: '0.95rem', padding: '0.7rem 1.5rem',
+                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                textDecoration: 'none',
               }}
             >
-              <History size={20} /> View History
-            </button>
+              View past uploads
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Features Grid ─────────────────────────────────────────────── */}
+      {/* ── Divider ──────────────────────────────────────────────── */}
+      <div style={{ borderTop: '1px solid var(--border)', margin: '0 1.5rem' }} />
+
+      {/* ── What it does ─────────────────────────────────────────── */}
       <section style={{
-        maxWidth: 1100,
+        padding: '3rem 1.5rem',
+        maxWidth: 900,
         margin: '0 auto',
-        padding: '2rem 1.5rem 4rem',
       }}>
-        <div className="animate-fade-in-delay" style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h2 style={{
-            fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-            fontWeight: 800,
-            marginBottom: '0.75rem',
-          }}>
-            Everything You Need
-          </h2>
-          <p style={{
-            color: 'var(--text-secondary)',
-            fontSize: '1rem',
-            maxWidth: 480,
-            margin: '0 auto',
-          }}>
-            Powerful validation pipeline built for transaction data accuracy
-          </p>
-        </div>
+        <h2 style={{
+          fontSize: '1.25rem',
+          fontWeight: 650,
+          marginBottom: '1.75rem',
+          color: 'var(--text-primary)',
+        }}>
+          What it does
+        </h2>
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '1.25rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: '1rem',
         }}>
           {[
             {
-              icon: <FileSpreadsheet size={26} />,
-              title: 'Smart Column Mapping',
-              desc: 'Auto-detects your CSV columns and suggests intelligent mappings for mismatched headers.',
-              color: '#6366f1',
+              icon: <FileText size={20} />,
+              title: 'Smart column detection',
+              desc: 'Automatically maps your CSV headers to expected fields. Handles mismatched or extra columns.',
             },
             {
-              icon: <ShieldCheck size={26} />,
-              title: 'Multi-Rule Validation',
-              desc: 'Validates dates, amounts, emails, duplicates, and custom business rules in one pass.',
-              color: '#10b981',
+              icon: <CheckCircle size={20} />,
+              title: 'Multi-rule validation',
+              desc: 'Checks dates, phone numbers, amounts, duplicates, and missing values in a single pass.',
             },
             {
-              icon: <BarChart3 size={26} />,
-              title: 'Quality Scoring',
-              desc: 'Get an instant quality score with detailed breakdowns per field and validation rule.',
-              color: '#f59e0b',
+              icon: <BarChart2 size={20} />,
+              title: 'Quality scoring',
+              desc: 'Gives a quality score with breakdown by completeness, accuracy, and consistency.',
             },
             {
-              icon: <Download size={26} />,
-              title: 'Clean Data Export',
-              desc: 'Download clean rows, invalid rows, and error reports separately or as a ZIP bundle.',
-              color: '#ec4899',
+              icon: <Download size={20} />,
+              title: 'Export clean data',
+              desc: 'Download valid rows, invalid rows, and a detailed error report as separate CSV files or a ZIP.',
             },
-            {
-              icon: <Database size={26} />,
-              title: 'Upload History',
-              desc: 'Track all past validations with timestamps, file sizes, and quality scores.',
-              color: '#8b5cf6',
-            },
-            {
-              icon: <CheckCircle2 size={26} />,
-              title: 'Detailed Error Reports',
-              desc: 'Row-by-row error breakdown with severity levels, filterable and downloadable.',
-              color: '#06b6d4',
-            },
-          ].map((feature, i) => (
+          ].map((item, i) => (
             <div
               key={i}
               className="glass-card"
               style={{
-                padding: '1.75rem',
-                cursor: 'default',
-                animation: `fadeIn 0.5s ease-out ${0.1 * i}s both`,
+                padding: '1.25rem',
+                animation: `fadeIn 0.3s ease-out ${0.05 * i}s both`,
               }}
             >
               <div style={{
-                width: 48, height: 48, borderRadius: 12,
-                background: `${feature.color}15`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: feature.color,
-                marginBottom: '1rem',
+                color: 'var(--accent)',
+                marginBottom: '0.75rem',
               }}>
-                {feature.icon}
+                {item.icon}
               </div>
               <h3 style={{
-                fontSize: '1.05rem', fontWeight: 700,
-                marginBottom: '0.5rem',
+                fontSize: '0.95rem',
+                fontWeight: 600,
+                marginBottom: '0.4rem',
+                color: 'var(--text-primary)',
               }}>
-                {feature.title}
+                {item.title}
               </h3>
               <p style={{
                 color: 'var(--text-secondary)',
-                fontSize: '0.9rem',
-                lineHeight: 1.55,
+                fontSize: '0.87rem',
+                lineHeight: 1.5,
               }}>
-                {feature.desc}
+                {item.desc}
               </p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── How It Works ──────────────────────────────────────────────── */}
+      {/* ── How it works ─────────────────────────────────────────── */}
       <section style={{
         background: 'var(--bg-secondary)',
-        padding: '4rem 1.5rem',
+        padding: '3rem 1.5rem',
       }}>
-        <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h2 style={{
-              fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-              fontWeight: 800,
-              marginBottom: '0.75rem',
-            }}>
-              How It Works
-            </h2>
-            <p style={{
-              color: 'var(--text-secondary)',
-              fontSize: '1rem',
-            }}>
-              Three simple steps to clean, validated data
-            </p>
-          </div>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '2rem',
+        <div style={{ maxWidth: 700, margin: '0 auto' }}>
+          <h2 style={{
+            fontSize: '1.25rem',
+            fontWeight: 650,
+            marginBottom: '1.5rem',
+            color: 'var(--text-primary)',
           }}>
+            How it works
+          </h2>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {[
-              {
-                step: '01',
-                title: 'Upload CSV',
-                desc: 'Drag & drop or browse to upload your transaction CSV file.',
-                icon: <Upload size={24} />,
-              },
-              {
-                step: '02',
-                title: 'Auto Validate',
-                desc: 'Our engine runs 10+ validation rules across every row and column.',
-                icon: <ShieldCheck size={24} />,
-              },
-              {
-                step: '03',
-                title: 'Get Results',
-                desc: 'View dashboard with quality scores, download clean & error files.',
-                icon: <BarChart3 size={24} />,
-              },
-            ].map((item, i) => (
+              { num: '1', text: 'Upload your CSV file — drag and drop or click to browse.' },
+              { num: '2', text: 'The system runs validation rules across every row and column.' },
+              { num: '3', text: 'View your dashboard — quality scores, error breakdowns, download files.' },
+            ].map((step, i) => (
               <div key={i} style={{
-                textAlign: 'center',
-                animation: `fadeIn 0.5s ease-out ${0.15 * i}s both`,
+                display: 'flex', gap: '1rem', alignItems: 'flex-start',
               }}>
-                <div style={{
-                  fontSize: '2.5rem', fontWeight: 900,
-                  background: 'linear-gradient(135deg, var(--accent), #a55eea)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  marginBottom: '0.75rem',
-                }}>
-                  {item.step}
-                </div>
-                <div style={{
-                  width: 52, height: 52, borderRadius: 14,
-                  background: 'var(--accent-glow)',
+                <span style={{
+                  minWidth: 28, height: 28, borderRadius: 6,
+                  background: 'var(--accent)',
+                  color: '#fff', fontWeight: 650, fontSize: '0.82rem',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'var(--accent)',
-                  margin: '0 auto 1rem',
                 }}>
-                  {item.icon}
-                </div>
-                <h3 style={{
-                  fontSize: '1.1rem', fontWeight: 700,
-                  marginBottom: '0.5rem',
-                }}>
-                  {item.title}
-                </h3>
+                  {step.num}
+                </span>
                 <p style={{
-                  color: 'var(--text-secondary)',
-                  fontSize: '0.9rem',
-                  lineHeight: 1.55,
+                  color: 'var(--text-primary)',
+                  fontSize: '0.95rem',
+                  lineHeight: 1.5,
+                  paddingTop: '0.15rem',
                 }}>
-                  {item.desc}
+                  {step.text}
                 </p>
               </div>
             ))}
@@ -301,53 +198,15 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Bottom CTA ────────────────────────────────────────────────── */}
-      <section style={{
-        padding: '4rem 1.5rem',
-        textAlign: 'center',
-      }}>
-        <div className="glass-card" style={{
-          maxWidth: 700, margin: '0 auto',
-          padding: '3rem 2rem',
-          background: 'linear-gradient(135deg, var(--glass-bg), rgba(99,102,241,0.05))',
-        }}>
-          <h2 style={{
-            fontSize: 'clamp(1.3rem, 3vw, 1.8rem)',
-            fontWeight: 800,
-            marginBottom: '0.75rem',
-          }}>
-            Ready to Validate Your Data?
-          </h2>
-          <p style={{
-            color: 'var(--text-secondary)',
-            marginBottom: '1.5rem',
-            fontSize: '1rem',
-          }}>
-            Start uploading your CSV files and get instant quality insights.
-          </p>
-          <button
-            id="cta-get-started-btn"
-            className="btn-primary"
-            onClick={() => handleAction('/upload')}
-            style={{
-              fontSize: '1.05rem', padding: '0.95rem 2.5rem',
-              display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
-            }}
-          >
-            Get Started <ArrowRight size={18} />
-          </button>
-        </div>
-      </section>
-
-      {/* ── Footer ────────────────────────────────────────────────────── */}
+      {/* ── Footer ───────────────────────────────────────────────── */}
       <footer style={{
         borderTop: '1px solid var(--border)',
-        padding: '1.5rem',
+        padding: '1.25rem 1.5rem',
         textAlign: 'center',
         color: 'var(--text-secondary)',
-        fontSize: '0.85rem',
+        fontSize: '0.82rem',
       }}>
-        © {new Date().getFullYear()} Xeno Validator — Built for data accuracy
+        Xeno Validator
       </footer>
     </div>
   )

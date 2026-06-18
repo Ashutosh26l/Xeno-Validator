@@ -7,7 +7,6 @@ import { stringify } from "csv-stringify/sync";
 import archiver from "archiver";
 import { PassThrough } from "stream";
 import { supabase } from "../config/supabase.js";
-import { authMiddleware } from "../middleware/auth.js";
 import { runValidation } from "../services/validationService.js";
 import { calculateScore, calculateBreakdown } from "../services/qualityService.js";
 import { chunkRows } from "../services/chunkingService.js";
@@ -17,11 +16,11 @@ import { generatePdf } from "../services/pdfService.js";
 
 const router = Router();
 
-router.post("/validate/:uploadId", authMiddleware, async (req, res, next) => {
+router.post("/validate/:uploadId", async (req, res, next) => {
   try {
     const { uploadId } = req.params;
 
-    // ── 1. Fetch upload record & verify ownership ───────────────────────────
+    // ── 1. Fetch upload record ──────────────────────────────────────────────
     const { data: upload, error: fetchErr } = await supabase
       .from("uploads")
       .select("*")
@@ -31,9 +30,6 @@ router.post("/validate/:uploadId", authMiddleware, async (req, res, next) => {
     if (fetchErr) throw fetchErr;
     if (!upload) {
       return res.status(404).json({ success: false, error: "Upload not found.", code: 404 });
-    }
-    if (upload.user_id !== req.user.id) {
-      return res.status(403).json({ success: false, error: "Access denied.", code: 403 });
     }
     if (upload.status === "completed") {
       return res.status(400).json({ success: false, error: "This upload has already been validated.", code: 400 });
@@ -124,7 +120,6 @@ router.post("/validate/:uploadId", authMiddleware, async (req, res, next) => {
     }
 
     // ── 10. Save errors to DB ───────────────────────────────────────────────
-    // Insert in batches of 500 to avoid payload limits
     const realErrors = errorLog.filter((e) => e.error_type !== "corrected");
     for (let i = 0; i < realErrors.length; i += 500) {
       const batch = realErrors.slice(i, i + 500).map((e) => ({
